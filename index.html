@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soporte Técnico y Mantenimiento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+
+        /* Estilos básicos */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-color: #f4f6f9;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+        }  
+
+        /* Estilo del círculo de carga */
+        #loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #2980b9;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            z-index: 9999;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Botón para abrir la barra lateral */
+        #openSidebarBtn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            background-color: #1f6fa5;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 1;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        /* Barra lateral */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            left: -250px;
+            top: 0;
+            background-color: #34495e;
+            color: white;
+            overflow-x: hidden;
+            overflow-y: auto;
+            transition: 0.3s ease;
+            padding-top: 20px;
+            z-index: 2;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #2c3e50;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        /* Configuración de contenido */
+        .content {
+            margin-left: 20px;
+            padding: 20px;
+            max-width: 1000px;
+            margin: auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: margin-left 0.5s;
+        }
+
+        .inicio h1 {
+            font-size: 32px;
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 0;
+            padding-top: 10px;
+        }
+
+        h2 {
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+
+        /* Estilos para el índice */
+        #indice {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fdfdfd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        #indice th, #indice td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            color: #2c3e50;
+        }
+
+        #indice th {
+            background-color: #2980b9;
+            color: white;
+            font-weight: bold;
+        }
+
+        #indice td a {
+            color: #2980b9;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        #indice td a:hover {
+            color: #1f6fa5;
+        }
+
+        .sidebar-open {
+            left: 0;
+        }
+
+        /* Ajuste de responsividad */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            #openSidebarBtn {
+                right: 5px;
+            }
+            .content, .section-style {
+                margin-left: 0;
+                padding: 15px;
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+                left: -100%;
+            }
+            .content, .section-style {
+                padding: 10px;
+                max-width: 100%;
+            }
+        }
+
+        .section-content {
+            display: none;
+        }
+
+        /* Ajuste de estilo para secciones */
+        .section-style {
+            margin-left: 20px;
+            padding: 20px;
+            max-width: 1000px;
+            margin: auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: margin-left 0.5s;
+        }
+
+        #inicio {
+            display: block;
+        }
+
+        /* Estilos para videos responsivos */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            /* Mantiene la proporción de 16:9 */
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    </body>
+</head>
+
+<body onload="hideLoading()">
+    <div id="loading"></div>
+    <button id="openSidebarBtn" onclick="toggleSidebar()" aria-label="Abrir barra lateral">☰</button>
+
+    <div id="sidebar" class="sidebar">
+        <a tabindex="1" onclick="showSection('inicio')"><i class="fas fa-home"></i>Inicio</a>
+        <a tabindex="2" onclick="showSection('historia')"><i class="fas fa-book"></i>Historia de las Computadoras</a>
+        <a tabindex="3" onclick="showSection('tipos')"><i class="fas fa-desktop"></i>Clases o Tipos de Computadoras</a>
+        <a tabindex="4" onclick="showSection('case')"><i class="fas fa-archive"></i>Case: Características y tipos</a>
+        <a tabindex="5" onclick="showSection('motherboard')"><i class="fas fa-th-large"></i>Motherboard: Características y Tipos</a>
+        <a tabindex="6" onclick="showSection('ranuras')"><i class="fas fa-plug"></i>Ranuras de Expansión: Características</a>
+        <a tabindex="7" onclick="showSection('almacenamiento')"><i class="fas fa-hdd"></i>Unidades de Almacenamiento</a>
+        <a tabindex="8" onclick="showSection('tarjetas')"><i class="fas fa-cogs"></i>Tarjetas de Expansión</a>
+        <a tabindex="9" onclick="showSection('glosario')"><i class="fas fa-list"></i>Glosario de Términos</a>
+        <a tabindex="10" onclick="showSection('bibliografia')"><i class="fas fa-book-open"></i>Bibliografía</a>
+    </div>
+    
+<!-- Secciones de contenido, todas ocultas inicialmente -->
+<div id="inicio" class="section-content"><!-- Contenido principal -->
+    <div class="content">
+            <h1>Soporte Técnico y Mantenimiento Configuración de Equipos de Computación</h1>
+            <p>Bienvenido a la guía completa sobre soporte técnico y mantenimiento de computadoras. Aquí encontrarás información detallada sobre diversos componentes de equipos de computación.</p>
+        </div>
+        <!-- Índice -->
+        <table id="indice">
+            <thead>
+                <tr>
+                    <th>Tema</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Historia de las Computadoras</td>
+                    <td>Explora el desarrollo de las computadoras desde sus inicios.</td>
+                </tr>
+                <tr>
+                    <td>Clases o Tipos de Computadoras</a></td>
+                    <td>Conoce los distintos tipos de computadoras y sus usos.</td>
+                </tr>
+                <tr>
+                    <td>Case: Características y tipos</a></td>
+                    <td>Información sobre los diferentes tipos de cases para computadoras.</td>
+                </tr>
+                <tr>
+                    <td>Motherboard: Características y Tipos</a></td>
+                    <td>Detalles sobre las motherboards y sus funciones.</td>
+                </tr>
+                <tr>
+                    <td>Ranuras de Expansión: Características</a></td>
+                    <td>Características y tipos de ranuras de expansión.</td>
+                </tr>
+                <tr>
+                    <td>Unidades de Almacenamiento</a></td>
+                    <td>Tipos de discos duros y sus características.</td>
+                </tr>
+                <tr>
+                    <td>Tarjetas de Expansión</a></td>
+                    <td>Función y tipos de tarjetas de expansión.</td>
+                </tr>
+                <tr>
+                    <td>Glosario de Términos</a></td>
+                    <td>Definiciones de términos técnicos.</td>
+                </tr>
+                <tr>
+                    <td>Bibliografía</a></td>
+                    <td>Fuentes y referencias utilizadas en el contenido.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+<div id="historia" class="section-content section-style"> <h2>Historia de las Computadoras</h2>
+    <p><strong>Introducción</strong><br>
+       La historia de las computadoras es un fascinante viaje que abarca más de dos mil años, desde los dispositivos más simples de la antigüedad hasta las máquinas sofisticadas que utilizamos hoy en día. A lo largo de este recorrido, la humanidad ha buscado formas de optimizar sus actividades cotidianas, lo que ha llevado al desarrollo de herramientas más complejas y eficientes. Esta evolución ha sido impulsada por la necesidad de resolver problemas y mejorar la productividad en diversos campos, como la ciencia, la industria y la vida cotidiana.</p>
+    
+    <!-- Capítulo 1 -->
+    <h3>Capítulo 1: Los Primeros Pasos de la Computación</h3>
+    <p>En el siglo XIX, figuras clave como Joseph Marie Jacquard y Charles Babbage realizaron avances significativos que sentaron las bases para las futuras computadoras. Sus innovaciones mecánicas cambiaron la forma en que se procesaba la información, introduciendo conceptos fundamentales como la programación y la automatización.</p>
+    <ul>
+        <li><strong>1801</strong>: Joseph Marie Jacquard inventa un telar automatizado que utiliza tarjetas perforadas para controlar la operación del telar.</li>
+        <li><strong>1821</strong>: Charles Babbage desarrolla la Máquina Diferencial, la primera computadora mecánica.</li>
+        <li><strong>1848</strong>: Ada Lovelace escribe el primer programa de computadora para la Máquina Analítica.</li>
+    </ul>
+
+    <!-- Capítulo 2 -->
+    <h3>Capítulo 2: La Revolución del Siglo XX</h3>
+    <p>A medida que avanzaba el siglo XX, las computadoras comenzaron a evolucionar rápidamente...</p>
+    <ul>
+        <li><strong>1936</strong>: Alan Turing introduce el concepto de la máquina de Turing.</li>
+        <li><strong>1941</strong>: Konrad Zuse completa el Z3.</li>
+        <li><strong>1943-1944</strong>: La Colossus es utilizada para descifrar los códigos de la máquina Enigma.</li>
+        <li><strong>1946</strong>: Se presenta la ENIAC.</li>
+    </ul>
+
+    <!-- Capítulo 3: Generaciones de Computadoras -->
+    <h3>Capítulo 3: Generaciones de Computadoras</h3>
+    <p>La evolución de las computadoras se clasifica en varias generaciones...</p>
+    <ul>
+        <li><strong>Primera Generación (1946-1955)</strong>: Uso de tubos de vacío.</li>
+        <li><strong>Segunda Generación (1958-1964)</strong>: Introducción de transistores.</li>
+        <li><strong>Tercera Generación (1964-1971)</strong>: Implementación de circuitos integrados.</li>
+        <li><strong>Cuarta Generación (1971-1981)</strong>: Emergence del microprocesador.</li>
+        <li><strong>Quinta Generación (1982-1989)</strong>: Desarrollo de supercomputadoras.</li>
+        <li><strong>Sexta Generación (1990-presente)</strong>: Avances en inteligencia artificial.</li>
+    </ul>
+
+    <h3>Capítulo 4: La Necesidad de Evolución</h3>
+    <p>La evolución tecnológica ha transformado las computadoras en herramientas esenciales...</p>
+    
+    <!-- Videos -->
+    <h3>Videos Relacionados</h3>
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/a8Q2xpI7hbs" title="Video sobre la historia de las computadoras" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <p><strong>Historia de las Computadoras</strong></p>
+    </div>
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/wD8yJnIG7gI" title="Video sobre la evolución de las computadoras" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <p><strong>Evolución de las Computadoras</strong></p>
+    </div>
+</div>
+
+<div id="tipos" class="section-content section-style"> <h2>Clases o Tipos de Computadoras</h2>
+    <p>Las computadoras se clasifican en diversas categorías, cada una diseñada para satisfacer necesidades específicas en diferentes entornos y aplicaciones. A continuación, se presentan las principales clases de computadoras, junto con sus características y usos más relevantes:</p>
+
+    <h3>1. Supercomputadoras</h3>
+    <p>Las supercomputadoras son los sistemas más potentes y avanzados del mundo, capaces de realizar billones de operaciones por segundo. Se utilizan en áreas que requieren un alto nivel de procesamiento, como la climatología, la biología molecular, la simulación de fenómenos físicos y el análisis de grandes volúmenes de datos. Un ejemplo destacado es la <em>Tianhe-2</em> de China, que ha liderado las listas de supercomputadoras a nivel global.</p>
+
+    <h3>2. Mainframes</h3>
+    <p>Los mainframes son ordenadores centrales utilizados principalmente por grandes corporaciones y entidades gubernamentales. Estos sistemas están diseñados para manejar grandes volúmenes de transacciones y para gestionar bases de datos complejas de manera eficiente. Su fiabilidad y capacidad de procesamiento en paralelo los hacen ideales para tareas críticas, como la gestión de reservas en aerolíneas y el procesamiento de pagos en tiempo real.</p>
+
+    <h3>3. Ordenadores Personales</h3>
+    <p>Los ordenadores personales están diseñados para ser utilizados por un solo usuario y son esenciales en la vida cotidiana, así como en el entorno laboral. Estos dispositivos han evolucionado a lo largo de los años, aumentando su potencia y capacidades para realizar tareas variadas, desde la navegación en internet hasta la edición de documentos y multimedia. Existen diferentes tipos, como las PCs de escritorio y portátiles, adaptándose a diversas preferencias de uso.</p>
+
+    <h3>4. Portátiles</h3>
+    <p>Los portátiles son computadoras ligeras y compactas que integran todos los componentes necesarios en un solo dispositivo, incluyendo pantalla, teclado y batería. Estos equipos son ideales para usuarios que requieren movilidad, permitiendo realizar tareas de productividad y entretenimiento en cualquier lugar. Su diseño ha avanzado para ofrecer un equilibrio entre rendimiento y portabilidad.</p>
+
+    <h3>5. Ordenadores de Escritorio</h3>
+    <p>Compuestos por una unidad central de procesamiento (CPU), monitor, teclado y ratón, los ordenadores de escritorio son utilizados en una variedad de aplicaciones, desde la edición de video hasta el diseño gráfico y la programación. Su estructura modular permite actualizar componentes individuales, como la tarjeta gráfica y la memoria, lo que los convierte en una opción versátil para usuarios que buscan un rendimiento sólido.</p>
+
+    <h3>6. Netbooks</h3>
+    <p>Los netbooks son computadoras pequeñas y económicas, diseñadas para realizar tareas básicas como la navegación por internet, el procesamiento de textos y la gestión de correos electrónicos. Su bajo costo y tamaño reducido los hacen ideales para estudiantes y usuarios que requieren un dispositivo sencillo para actividades cotidianas sin exigencias de hardware elevado.</p>
+
+    <h3>7. Workstations</h3>
+    <p>Las workstations son computadoras de alto rendimiento, diseñadas específicamente para aplicaciones que requieren gran capacidad de procesamiento, como el diseño asistido por computadora (CAD), la edición de video profesional y el modelado 3D. Su hardware especializado, que incluye potentes tarjetas gráficas y grandes cantidades de memoria, las hace ideales para profesionales en campos creativos y técnicos.</p>
+
+    <h3>8. Tablets</h3>
+    <p>Las tablets son dispositivos portátiles con pantallas táctiles, que combinan la funcionalidad de un ordenador con la portabilidad de un smartphone. Utilizadas principalmente para entretenimiento, navegación por internet y tareas ligeras de productividad, estos dispositivos han ganado popularidad debido a su facilidad de uso y diseño intuitivo.</p>
+
+    <h3>9. Smartphones</h3>
+    <p>Los smartphones son dispositivos compactos que ofrecen múltiples funcionalidades, incluyendo llamadas, mensajería, navegación web, fotografía y acceso a aplicaciones. Su formato reducido permite realizar tareas básicas en cualquier lugar, convirtiéndose en herramientas esenciales para la comunicación y el acceso a información en tiempo real.</p>
+
+    <h3>10. Computadoras Vestibles</h3>
+    <p>Las computadoras vestibles, como relojes inteligentes y pulseras de actividad, están integradas en accesorios que se llevan en el cuerpo. Estos dispositivos complementan las funcionalidades de los smartphones, ofreciendo seguimiento de salud, notificaciones y acceso a aplicaciones básicas, contribuyendo a un estilo de vida más conectado y saludable.</p>
+
+    <h3>Videos Relacionados</h3>
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/MoVtn1_hqb4" title="Clases o Tipos de Computadoras" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <p><strong>Tipos de Computadoras - Video 1</strong></p>
+    </div>
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/O-rom9FXDtQ?start=160" title="Clases o Tipos de Computadoras - Video 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <p><strong>Tipos de Computadoras - Video 2 (Comienza en 2:40)</strong></p>
+    </div>
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/8YiLEE4yka4" title="Clases o Tipos de Computadoras - Video 3" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <p><strong>Tipos de Computadoras - Video 3</strong></p>
+    </div>
+</div>
+
+<div id="case" class="section-content section-style"> <h2>Case: Características y Tipos</h2>
+
+    <h3>Función del Case en el Mantenimiento de Equipos</h3>
+    <p>El <strong>case</strong> o <strong>gabinete</strong> desempeña un papel fundamental en el mantenimiento y la protección de los componentes críticos de un computador, tales como la <strong>mainboard</strong> (placa madre) y el <strong>disco duro</strong>. Este dispositivo no solo sirve como contenedor físico, sino que también protege a los componentes del polvo, daños físicos y factores ambientales adversos. Además, ayuda a mantener una temperatura adecuada, lo cual es esencial para el rendimiento óptimo y la durabilidad del sistema a lo largo del tiempo.</p>
+
+    <h4>Componentes del Case</h4>
+    <ul>
+        <li><strong>Bahías</strong>: Estas son cavidades diseñadas específicamente para la instalación de dispositivos de almacenamiento, como discos duros, unidades de estado sólido (SSD) y lectoras de CD/DVD. Pueden ser internas, lo que significa que están ocultas dentro del gabinete, o externas, permitiendo el acceso directo desde el exterior.</li>
+        <li><strong>Power Switch</strong>: Este botón es crucial para encender y apagar el sistema. Se ubica generalmente en la parte frontal del gabinete para facilitar su uso y accesibilidad.</li>
+        <li><strong>Reset</strong>: El botón de reinicio permite reiniciar el equipo sin la necesidad de apagarlo completamente. Esta función es especialmente útil en casos donde el sistema se congela o experimenta problemas temporales.</li>
+        <li><strong>LEDs</strong>: Los indicadores luminosos proporcionan información visual sobre el estado del sistema, como la actividad del disco duro (HDD) y el estado de encendido (power). Su presencia permite una rápida evaluación del funcionamiento del computador sin necesidad de encenderlo completamente.</li>
+        <li><strong>Keylock</strong>: Aunque obsoleto en los gabinetes modernos, este mecanismo de cerradura se utilizaba para bloquear el teclado, evitando accesos no autorizados al sistema. Su función ha sido mayormente reemplazada por métodos de seguridad más avanzados.</li>
+        <li><strong>Turbo Switch</strong>: Originalmente, este botón permitía acelerar el rendimiento del procesador durante tareas exigentes. En la actualidad, la gestión del rendimiento se realiza a través del BIOS, eliminando la necesidad de un interruptor físico dedicado.</li>
+        <li><strong>Speaker interno</strong>: Un pequeño altavoz integrado en el gabinete que emite señales de error (beeps) durante el arranque del sistema. Estos códigos sonoros son cruciales para diagnosticar problemas de hardware de manera eficiente.</li>
+    </ul>
+
+    <h4>Tipos de Case</h4>
+    <ol>
+        <li><strong>Case Horizontal</strong>: Aunque fue común en el pasado, especialmente en equipos de sobremesa, este diseño ha sido en gran medida reemplazado por modelos más eficientes. Sin embargo, algunos casos horizontales todavía se utilizan en aplicaciones específicas, como servidores o estaciones de trabajo dedicadas.</li>
+        <li><strong>Case Vertical</strong>: Este es el tipo más prevalente en la actualidad, diseñado para colocarse en posición vertical. Los gabinetes verticales son compatibles con una amplia variedad de tamaños de tarjetas madre, como ATX y Micro ATX, y ofrecen un mayor espacio interno para componentes, facilitando así una mejor ventilación y gestión del calor.</li>
+    </ol>
+
+    <h3>Tipos de Torre, Chasis o Caja para PC</h3>
+    <p>Existen diversos tipos de chasis para PC, cada uno con características específicas que se adaptan a las distintas necesidades y usos de los usuarios. La elección adecuada del tipo de chasis es fundamental para optimizar el rendimiento del sistema y garantizar su durabilidad.</p>
+
+    <h4>Tipos de Torre</h4>
+    <ol>
+        <li><strong>Small Form Factor (Mini-ITX)</strong>: Este tipo de case es compacto y ligero, ideal para la portabilidad y para su uso en espacios reducidos. Se emplea comúnmente en sistemas de entretenimiento o computadoras diseñadas para tareas que no requieren hardware avanzado.</li>
+        <li><strong>Mini Torre (Micro-ATX)</strong>: Ofrece un equilibrio entre un tamaño compacto y la capacidad de expansión. Este diseño permite la instalación de varios dispositivos y es una opción popular para configuraciones de oficina y juegos ligeros.</li>
+        <li><strong>Media Torre (Mid-Tower, ATX)</strong>: Proporciona un mayor espacio interno, permitiendo la instalación de tarjetas gráficas de mayor tamaño y sistemas de refrigeración más eficientes. Es una opción versátil que se adapta a las necesidades de la mayoría de los usuarios que buscan un buen rendimiento.</li>
+        <li><strong>Torre Completa (Full Tower, E-ATX)</strong>: Diseñada para sistemas avanzados, ofrece amplias opciones de expansión y soporte para soluciones de refrigeración personalizadas. Es ideal para entusiastas del hardware y usuarios que realizan overclocking o requieren configuraciones complejas.</li>
+    </ol>
+
+    <p>Es recomendable seleccionar el tipo de chasis según las prioridades personales, como la portabilidad, la capacidad de enfriamiento y la cantidad de componentes que se planea instalar. El formato ATX se considera el más equilibrado, ya que proporciona suficiente espacio y flexibilidad para la mayoría de las configuraciones de usuario.</p>
+
+    <!-- Videos -->
+    <h4>Videos Relacionados</h4>
+    <div class="video-container"> 
+    <iframe src="https://www.youtube.com/embed/Dd4pM_-kSxs?start=20" title="Función del Case en el Mantenimiento de Equipos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> </div> 
+    <div class="video-container"> 
+    <iframe src="https://www.youtube.com/embed/fArmVJZYHCM?start=26" title="Tipos de Case" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> </div>
+</div>
+
+<div id="motherboard" class="section-content section-style"> <h2>Motherboard: Características y Tipos</h2>
+    <p>La <strong>placa madre</strong> o <strong>motherboard</strong> es la tarjeta principal de un sistema informático, facilitando la conexión de componentes esenciales y actuando como el corazón del ordenador. Sin la placa madre, los diferentes componentes del sistema no podrían comunicarse entre sí, lo que la convierte en un elemento fundamental en la arquitectura de cualquier computadora.</p>
+    
+    <h4>Funciones</h4>
+    <p>La placa madre permite la transmisión de datos entre el <strong>microprocesador</strong>, la <strong>memoria RAM</strong> y los <strong>periféricos</strong>. Esta función es crucial para el funcionamiento del sistema, ya que coordina las operaciones de todos los componentes conectados. Además, actúa como un hub que permite que diferentes partes del sistema se comuniquen, garantizando un rendimiento eficiente.</p>
+    
+    <h4>Tipos de Placa Madre</h4>
+    <ul>
+        <li><strong>Monoprocesadoras</strong>: Aceptan un único microprocesador. Son comunes en computadoras de escritorio y portátiles, ofreciendo un equilibrio entre costo y rendimiento.</li>
+        <li><strong>Multiprocesadoras</strong>: Soportan múltiples microprocesadores, permitiendo un mayor rendimiento en tareas que requieren alta capacidad de procesamiento, como servidores y estaciones de trabajo. Estas placas son utilizadas en entornos que demandan un alto nivel de procesamiento paralelo.</li>
+    </ul>
+    
+    <h4>Partes Principales</h4>
+    <ul>
+        <li><strong>Conectores de alimentación</strong>: Suministran la energía necesaria para que la placa madre y sus componentes funcionen. Estos conectores se conectan a la fuente de alimentación del sistema y son vitales para el funcionamiento del hardware.</li>
+        <li><strong>Zócalo del CPU</strong>: Lugar donde se instala el microprocesador. Este zócalo tiene un diseño específico que se adapta a diferentes tipos de procesadores, garantizando una conexión adecuada para la transferencia de datos.</li>
+        <li><strong>Ranuras de RAM</strong>: Espacios donde se instalan los módulos de memoria RAM. Estas ranuras permiten la expansión de la memoria del sistema, lo que puede mejorar el rendimiento en tareas que requieren un alto uso de memoria.</li>
+        <li><strong>Chipset</strong>: Gestiona la transferencia de datos entre el CPU y otros componentes del sistema. Se divide en <strong>Puente norte</strong>, que controla el acceso a la memoria y al bus de alta velocidad, y <strong>Puente sur</strong>, que gestiona las conexiones a dispositivos más lentos como discos duros y puertos USB.</li>
+        <li><strong>Otros componentes</strong>: Incluyen el <strong>reloj del sistema</strong>, que sincroniza todas las operaciones de la placa madre, y el <strong>BIOS</strong> (Basic Input/Output System), que inicializa el hardware al encender la computadora y proporciona una interfaz entre el sistema operativo y el hardware. También se encuentra el <strong>CMOS</strong> (Complementary Metal-Oxide-Semiconductor), que almacena la configuración del BIOS y la hora del sistema.</li>
+    </ul>
+    
+    <h4>Identificación de la Placa Madre</h4>
+    <p>Para identificar la placa madre, se puede observar la tarjeta más grande dentro del <strong>CPU</strong> (unidad central de procesamiento) o utilizar herramientas de sistema como <code>msinfo32</code> en Windows, que proporciona información detallada sobre el hardware del sistema, incluyendo la marca y modelo de la placa madre.</p>
+    
+    <h4>Importancia de la Placa Madre</h4>
+    <p>La elección de una placa madre adecuada es fundamental para el rendimiento general del sistema. Diferentes placas madre ofrecen diferentes características, capacidades de expansión y compatibilidad con diversos componentes. La elección correcta puede impactar en la eficiencia, la estabilidad y la longevidad del sistema informático.</p>
+
+    <h4>Videos Relacionados</h4>
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/l8avRfJa1PM" title="YouTube video player" frameborder="0" allowfullscreen loading="lazy"></iframe> </div>
+
+        <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/BUOvDysNrTA" title="YouTube video player" frameborder="0" allowfullscreen loading="lazy"></iframe>
+    </div>
+</div>
+
+<div id="ranuras" class="section-content section-style"> <h2>Ranuras de Expansión: Características</h2>
+    
+    <h3>¿Qué es una ranura de expansión?</h3>
+    <p>Una ranura de expansión es un zócalo en la placa base de una computadora que permite la conexión de tarjetas de expansión. Estas tarjetas se utilizan para añadir o mejorar funcionalidades del sistema, como capacidades gráficas, de sonido o de red. Las ranuras de expansión permiten personalizar el ordenador según las necesidades del usuario, facilitando la actualización y el reemplazo de componentes sin tener que cambiar toda la unidad.</p>
+
+    <h3>Tipos de ranuras de expansión</h3>
+    <ul>
+        <li><strong>ISA (Industry Standard Architecture):</strong>
+            <p>Las primeras ranuras de expansión introducidas en los IBM PC, que permitían la conexión de periféricos como tarjetas de sonido y módems. Aunque fueron comunes en los años 80 y 90, hoy están obsoletas y han sido reemplazadas por tecnologías más avanzadas.</p>
+        </li>
+        <li><strong>PCI (Peripheral Component Interconnect):</strong>
+            <p>Reemplazaron las ranuras ISA, permitiendo la conexión de tarjetas a la placa base con tecnología en paralelo. Las ranuras PCI ofrecieron una mayor velocidad y mayor ancho de banda, siendo estándar en la mayoría de las computadoras de escritorio hasta la llegada de su sucesor.</p>
+        </li>
+        <li><strong>PCI-X (PCI eXtended):</strong>
+            <p>Una variante de PCI, diseñada para mejorar el rendimiento y la velocidad, especialmente en entornos de servidores. Proporciona un mayor ancho de banda y es compatible con PCI, aunque su uso ha disminuido con el tiempo.</p>
+        </li>
+        <li><strong>AGP (Accelerated Graphics Port):</strong>
+            <p>Ranuras dedicadas exclusivamente para tarjetas gráficas, ofreciendo una conexión más rápida y directa a la memoria del sistema. AGP fue popular en su tiempo, pero eventualmente fue sustituido por PCIe debido a la necesidad de mayor velocidad y eficiencia.</p>
+        </li>
+        <li><strong>PCIe (PCI Express):</strong>
+            <p>Evolución del estándar PCI, que utiliza transmisión en serie en lugar de paralela, proporcionando una mejora significativa en el rendimiento y la velocidad de transferencia de datos. PCIe se ha convertido en el estándar dominante para conectar tarjetas de expansión modernas, incluyendo tarjetas gráficas, de sonido y de red.</p>
+        </li>
+    </ul>
+
+    <h3>¿Tienen ranuras de expansión los portátiles?</h3>
+    <p>A diferencia de las computadoras de escritorio, los portátiles no suelen tener ranuras de expansión internas debido a su diseño compacto. Sin embargo, pueden utilizar dispositivos adicionales a través de PC Cards (también conocidas como PCMCIA) o ExpressCards. Estas soluciones externas permiten agregar funcionalidades como puertos USB adicionales, adaptadores de red y más, aunque con limitaciones en comparación con las ranuras internas.</p>
+
+    <h3>Ventajas de las ranuras de expansión</h3>
+    <p>Las ranuras de expansión ofrecen varias ventajas, entre ellas:</p>
+    <ul>
+        <li><strong>Actualización fácil:</strong> Permiten a los usuarios actualizar componentes individuales sin tener que reemplazar todo el sistema, lo que extiende la vida útil del equipo.</li>
+        <li><strong>Personalización:</strong> Facilitan la personalización del ordenador según las necesidades específicas del usuario, como mejorar el rendimiento gráfico para juegos o la capacidad de almacenamiento.</li>
+        <li><strong>Evita obsolescencia:</strong> Al poder agregar nuevas tecnologías a través de tarjetas de expansión, los usuarios pueden evitar que su sistema se vuelva obsoleto rápidamente.</li>
+    </ul>
+
+    <h3>Video Relacionado</h3>
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/qu0JDSNGKiE" title="YouTube video player" frameborder="0" allowfullscreen loading="lazy"></iframe>
+    </div>
+</div>
+
+<div id="almacenamiento" class="section-content section-style"><h2>Unidades de Almacenamiento: Características y Tipos</h2>
+
+    <h3>¿Qué son las Unidades de Almacenamiento?</h3>
+    <p>Las unidades de almacenamiento son dispositivos que permiten guardar datos y recuperarlos cuando sea necesario. Son componentes esenciales en computadoras, servidores y dispositivos móviles, ya que almacenan desde archivos del sistema operativo hasta documentos, imágenes, videos y aplicaciones. Existen diferentes tipos de unidades de almacenamiento, cada una con características específicas que las hacen más adecuadas para ciertos usos. Las dos categorías más comunes son las unidades de estado sólido (SSD) y los discos duros (HDD).</p>
+
+    <h3>Diferencias entre SSD y HDD</h3>
+    <ul>
+        <li><strong>Definición:</strong> 
+            <ul>
+                <li><strong>SSD (Unidad de Estado Sólido):</strong> Utiliza memoria flash para almacenar datos, lo que significa que no tiene partes mecánicas móviles, lo que contribuye a una mayor durabilidad.</li>
+                <li><strong>HDD (Disco Duro):</strong> Utiliza discos magnéticos giratorios para almacenar datos, lo que implica que tiene partes mecánicas que pueden desgastarse o dañarse con el tiempo.</li>
+            </ul>
+        </li>
+
+        <li><strong>Función:</strong>
+            <p>Tanto las unidades de estado sólido (SSD) como los discos duros (HDD) son utilizados para almacenar una variedad de datos, incluyendo aplicaciones, archivos personales y sistemas operativos, pero su elección puede depender del uso específico.</p>
+        </li>
+
+        <li><strong>Estructura:</strong> 
+            <ul>
+                <li><strong>HDD:</strong> Consiste en uno o más discos (platos) revestidos magnéticamente que giran a alta velocidad. La lectura y escritura se realiza a través de un cabezal que se mueve sobre la superficie de los discos. Debido a su estructura mecánica, son más susceptibles a fallos por golpes o vibraciones.</li>
+                <li><strong>SSD:</strong> Basado en tecnología de almacenamiento Flash NAND, que permite la retención de datos sin necesidad de energía. Al carecer de partes móviles, ofrecen un rendimiento más estable y son menos propensas a fallos mecánicos.</li>
+            </ul>
+        </li>
+
+        <li><strong>Velocidad:</strong>
+            <p>Las SSD son considerablemente más rápidas que las HDD. Pueden superar en más del 20,000 % a las mejores HDD en velocidad de lectura aleatoria. Las SSD básicas, como las de Kingston, son aproximadamente diez veces más rápidas que los discos duros convencionales, lo que se traduce en un arranque más rápido del sistema y una carga más ágil de aplicaciones.</p>
+        </li>
+
+        <li><strong>Fragmentación:</strong>
+            <p>En los HDD, la fragmentación de datos puede ralentizar el acceso a los archivos, ya que el cabezal debe moverse a diferentes ubicaciones en el disco. En contraste, en las SSD, el acceso a los datos es uniforme y rápido, independientemente de dónde se almacenen los datos, lo que mejora la eficiencia.</p>
+        </li>
+
+        <li><strong>Almacenamiento:</strong>
+            <ul>
+                <li><strong>HDD:</strong> Son más adecuados para el almacenamiento masivo, como imágenes y películas, a un costo más bajo por terabyte, lo que los hace ideales para backups y almacenamiento a largo plazo.</li>
+                <li><strong>SSD:</strong> Proporcionan un rendimiento superior en términos de velocidad y tiempo de acceso, lo que los hace ideales para sistemas operativos, aplicaciones y juegos que requieren un acceso rápido a los datos.</li>
+            </ul>
+        </li>
+
+        <li><strong>Precios:</strong>
+            <p>Históricamente, las SSD eran más caras por gigabyte que las HDD, pero esta diferencia ha disminuido en los últimos años. Actualmente, el costo de las SSD sigue bajando, haciéndolas más accesibles para el consumidor promedio.</p>
+        </li>
+
+        <li><strong>Rendimiento:</strong>
+            <ul>
+                <li><strong>SSD:</strong> Velocidades de transferencia que varían entre 500 y 3500 MB/s, menor consumo de energía, menos ruido y calor generado, lo que contribuye a un entorno más silencioso y eficiente.</li>
+                <li><strong>HDD:</strong> Velocidades de transferencia que típicamente van de 30 a 150 MB/s, generan más ruido y calor debido a su naturaleza mecánica, y su rendimiento puede disminuir con el tiempo.</li>
+            </ul>
+        </li>
+
+        <li><strong>Durabilidad y Fiabilidad:</strong>
+            <ul>
+                <li><strong>SSD:</strong> Generalmente más resistentes debido a la ausencia de partes móviles; sin embargo, están limitadas en el número de veces que se pueden reescribir los datos antes de que se degrade su capacidad.</li>
+                <li><strong>HDD:</strong> Más vulnerables a daños mecánicos, pero ofrecen una recuperación de datos más sencilla, ya que los datos pueden ser extraídos de los platos, incluso si el disco falla.</li>
+            </ul>
+        </li>
+
+        <li><strong>Uso recomendado:</strong>
+            <ul>
+                <li><strong>SSD:</strong> Ideal para cargas de trabajo intensivas, como juegos de alta gama, edición de video y sistemas operativos donde la velocidad es crucial.</li>
+                <li><strong>HDD:</strong> Mejor para almacenamiento masivo, copias de seguridad y situaciones donde el costo es un factor importante, como en almacenamiento externo o sistemas de archivo.</li>
+                <li><strong>Combinación:</strong> Usar ambos tipos de discos (SSD para el sistema operativo y HDD para almacenamiento de datos) es una práctica recomendada para optimizar el rendimiento y el costo.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>Videos Relacionados</h3>
+    <div class="video-container">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/UYS_xMKSgtM" title="YouTube video player" frameborder="0" allowfullscreen loading="lazy"></iframe>
+        <p><small>Explorando las diferencias entre SSD y HDD</small></p>
+    </div>
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/Qsunfh8DXD0?start=31" title="YouTube video player" frameborder="0" allowfullscreen loading="lazy"></iframe>
+        <p><small>SSD vs HDD: ¿Cuál es mejor para ti?</small></p>
+    </div>
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/7dtUQzjPG1I?start=7" title="YouTube video player" frameborder="0" allowfullscreen loading="lazy"></iframe>
+        <p><small>Todo sobre unidades de almacenamiento</small></p>
+    </div>
+</div>
+
+<div id="tarjetas" class="section-content section-style"><h2>Tarjetas de Expansión</h2>
+    
+    <p>
+        <strong>Tarjeta de Expansión</strong><br>
+        Una tarjeta de expansión es un componente esencial que se inserta en una ranura de expansión de una computadora para aumentar sus capacidades operativas. Estas tarjetas, que contienen circuitos integrados y controladores, son fundamentales para mejorar el rendimiento del sistema, permitiendo la adición de memoria adicional, controladoras de disco, capacidades gráficas avanzadas y puertos de comunicación para conectar diversos dispositivos.
+    </p>
+    
+    <h3>Tipos de Tarjetas de Expansión</h3>
+    <ul>
+        <li><strong>PCI (Peripheral Component Interconnect):</strong> Estándar que facilita la conexión de múltiples dispositivos a la placa madre, permitiendo una comunicación eficiente.</li>
+        <li><strong>PCI Express (PCIe):</strong> Evolución del PCI que ofrece una mayor velocidad de transferencia de datos, ampliamente utilizado en el hardware moderno debido a su alto rendimiento.</li>
+        <li><strong>AGP (Accelerated Graphics Port):</strong> Diseñada específicamente para tarjetas gráficas, proporcionando una conexión rápida y eficiente con la CPU, optimizando el procesamiento gráfico.</li>
+    </ul>
+    
+    <h3>Ejemplos de Tarjetas de Expansión</h3>
+    <ul>
+        <li>Tarjetas de sonido: Mejoran la experiencia auditiva mediante un procesamiento de audio de alta calidad.</li>
+        <li>Tarjetas gráficas: Aumentan las capacidades visuales, fundamentales para juegos y aplicaciones de diseño gráfico.</li>
+        <li>Tarjetas de red: Permiten la conexión a redes, asegurando una comunicación rápida y estable.</li>
+        <li>Módems internos: Facilitan la conexión a internet a través de líneas telefónicas.</li>
+        <li>Sintonizadoras de televisión: Habilitan la recepción de señales de televisión, permitiendo visualizar y grabar programas.</li>
+    </ul>
+    
+    <h3>Historia de las Tarjetas de Expansión</h3>
+    <p>
+        La evolución de las tarjetas de expansión comenzó con la <strong>Altair 8800</strong> (1974-1975), que introdujo el concepto de bus de tarjeta. En 1981, <strong>IBM</strong> lanzó el bus XT, seguido por el bus <strong>ISA</strong> en 1984. Aunque otros estándares como <strong>MCA</strong> y <strong>EISA</strong> emergieron en el camino, fue el bus <strong>PCI</strong>, introducido en 1991, el que se estableció como el estándar predominante en la industria. Desde 2005, el <strong>PCI Express</strong> ha empezado a reemplazar tanto al PCI como al AGP, ofreciendo mayores velocidades y mayor eficiencia.
+    </p>
+    
+    <h3>Consideraciones Modernas</h3>
+    <p>
+        A medida que la tecnología avanza, algunas tarjetas de expansión han perdido relevancia frente a las innovaciones como USB y la integración de audio y video en las placas base. Sin embargo, estas tarjetas siguen siendo cruciales para configuraciones avanzadas y personalizadas, permitiendo a los entusiastas de la computación y los profesionales adaptar sus sistemas a sus necesidades específicas.
+    </p>
+
+    <h3>Aspectos a Considerar al Comprar Tarjetas de Expansión</h3>
+    <p>
+        Al elegir tarjetas de expansión, es fundamental considerar la compatibilidad con la placa base, así como el tipo y la cantidad de ranuras de expansión disponibles. Evaluar las necesidades del usuario, como la elección entre una ranura AGP o PCIe para mejorar la capacidad gráfica, ayuda a optimizar el rendimiento del sistema sin incurrir en gastos innecesarios.
+    </p>
+
+    <h3>Tipos de Tarjetas de Expansión en el Mercado</h3>
+    <ul>
+        <li><strong>Tarjeta gráfica:</strong> Mejora el rendimiento visual, ideal para edición de vídeo y videojuegos. Ejemplo: MSI GeForce RTX 4060 Ti VENTUS.</li>
+        <li><strong>Tarjeta de red:</strong> Proporciona conexiones rápidas y estables en múltiples redes. Ejemplo: ASUS PCE-AX1800.</li>
+        <li><strong>Tarjeta WiFi/Bluetooth:</strong> Aumenta la conectividad inalámbrica, adaptándose a los estándares más recientes. Ejemplo: Asus PCE-AX3000.</li>
+        <li><strong>Tarjeta de sonido:</strong> Mejora la calidad del audio para aplicaciones profesionales y entretenimiento. Ejemplo: Creative Sound Blaster Z SE.</li>
+        <li><strong>Capturadora de vídeo:</strong> Permite la grabación y transmisión en directo. Ejemplo: Elgato HD60 X.</li>
+        <li><strong>Tarjeta RAID:</strong> Conecta múltiples discos duros para mejorar la capacidad de almacenamiento y redundancia.</li>
+        <li><strong>Tarjeta USB:</strong> Aumenta la cantidad de puertos USB, especialmente útil en computadoras más antiguas. Ejemplo: Conceptronic Emrick U34.</li>
+        <li><strong>Tarjeta de expansión de puertos serie/paralelo:</strong> Facilita la conexión de dispositivos más antiguos que requieren estas interfaces.</li>
+    </ul>
+
+    <h3>Videos Informativos</h3>
+    <div class="video-container">
+        <h4>Introducción a las Tarjetas de Expansión</h4>
+        <iframe src="https://www.youtube.com/embed/P4eIGG5IGug" title="Introducción a las Tarjetas de Expansión" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="video-container"> 
+        <h4>Tipos de Tarjetas de Expansión</h4>
+        <iframe src="https://www.youtube.com/embed/cb60gZA2tz4?start=31" title="Tipos de Tarjetas de Expansión" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+</div>
+
+<div id="glosario" class="section-content section-style">
+    <h2>Glosario de Términos</h2>
+    <p>Aquí encontrarás un glosario con términos técnicos relevantes al tema de computadoras:</p>
+    <dl>
+        <dt><strong>Placa Base</strong></dt>
+        <dd>También conocida como <em>placa madre</em> o <em>motherboard</em>, es un componente esencial en un ordenador que actúa como el principal circuito de interconexión, permitiendo la comunicación entre todos los componentes del sistema, como el procesador, la memoria y las unidades de almacenamiento.</dd>
+        
+        <dt><strong>Interconexión</strong></dt>
+        <dd>Se refiere a la conexión física y lógica entre diferentes sistemas y componentes electrónicos dentro del dispositivo, lo que permite que los datos y la energía fluyan entre ellos de manera eficiente.</dd>
+        
+        <dt><strong>Memoria RAM</strong></dt>
+        <dd>Memoria de acceso aleatorio (RAM) es un tipo de memoria volátil utilizada para almacenar temporalmente datos y programas que el procesador necesita mientras está en funcionamiento. La capacidad y tipo de RAM dependen de los slots disponibles en la placa base.</dd>
+        
+        <dt><strong>Tamaño de la Placa</strong></dt>
+        <dd>Las placas base vienen en diferentes tamaños, como ATX, Micro ATX e ITX, que determinan la cantidad y tipo de hardware que se puede instalar, así como la compatibilidad con cajas y otros componentes.</dd>
+        
+        <dt><strong>Puertos USB</strong></dt>
+        <dd>Conectores que permiten la conexión de dispositivos periféricos, como ratones, teclados y discos duros externos, a través del estándar USB (Universal Serial Bus). La cantidad y tipo de puertos USB disponibles varían según la placa base.</dd>
+        
+        <dt><strong>Socket de CPU</strong></dt>
+        <dd>Es el punto de conexión donde se instala el procesador (CPU). El tipo de socket determina la compatibilidad con diferentes modelos y marcas de CPUs, afectando así el rendimiento general del sistema.</dd>
+        
+        <dt><strong>Unidades de Almacenamiento</strong></dt>
+        <dd>Dispositivos que almacenan datos de manera permanente, como discos duros (HDD) y unidades de estado sólido (SSD). La placa base define la cantidad y velocidad de las unidades que se pueden conectar.</dd>
+        
+        <dt><strong>Conectividad</strong></dt>
+        <dd>Se refiere a las opciones de conexión disponibles en la placa base, incluyendo interfaces de red, sonido y otros periféricos, lo que permite al ordenador comunicarse con otros dispositivos y redes.</dd>
+        
+        <dt><strong>Chipset</strong></dt>
+        <dd>Un conjunto de circuitos integrados que gestionan la comunicación entre el procesador y otros componentes de la placa base. El chipset determina la compatibilidad de la placa con otros elementos del sistema y puede afectar el rendimiento general.</dd>
+        
+        <dt><strong>Slots RAM</strong></dt>
+        <dd>Ranuras en la placa base donde se instalan módulos de memoria RAM. La cantidad de slots disponibles determina la cantidad total de memoria que se puede instalar.</dd>
+        
+        <dt><strong>Puertos de Disco</strong></dt>
+        <dd>Conexiones específicas en la placa base para discos duros y SSD, que pueden incluir SATA (Serial Advanced Technology Attachment) y NVMe (Non-Volatile Memory Express), cada uno con diferentes velocidades y capacidades.</dd>
+        
+        <dt><strong>Ranuras PCIe</strong></dt>
+        <dd>Ranuras de expansión que permiten la conexión de tarjetas adicionales, como tarjetas gráficas, de sonido o de red. Las ranuras PCIe (Peripheral Component Interconnect Express) ofrecen diferentes velocidades según la versión.</dd>
+        
+        <dt><strong>Conectores de Alimentación</strong></dt>
+        <dd>Conexiones que suministran energía eléctrica a la placa base desde la fuente de alimentación, asegurando que todos los componentes reciban la energía necesaria para funcionar.</dd>
+        
+        <dt><strong>Conexiones Exteriores</strong></dt>
+        <dd>Puertos ubicados en la parte posterior de la placa base que permiten conectar dispositivos periféricos, como monitores, impresoras y otros equipos.</dd>
+        
+        <dt><strong>Batería CMOS</strong></dt>
+        <dd>Batería que alimenta el circuito de memoria de la CMOS (Complementary Metal-Oxide-Semiconductor), que almacena la configuración del BIOS (Basic Input/Output System) y la hora del sistema, incluso cuando el ordenador está apagado.</dd>
+        
+        <dt><strong>Disipador de Calor</strong></dt>
+        <dd>Componente diseñado para reducir la temperatura de la placa base y otros componentes críticos, como el procesador, mediante la conducción y dispersión del calor generado durante el funcionamiento.</dd>
+    </dl>
+</div>
+
+<div id="bibliografia" class="section-content section-style">
+    <h2>Bibliografía</h2>
+    <ul>
+        <li><a href="https://aws.amazon.com/es/compare/the-difference-between-ssd-hard-drive/#:~:text=Las%20unidades%20de%20estado%20s%C3%B3lido,almacenan%20datos%20en%20discos%20magn%C3%A9ticos." target="_blank">AWS. (n.d.). Diferencias entre SSD y HDD.</a></li>
+        <li><a href="https://community.fs.com/es/article/que-es-tarjeta-de-expansion-y-tipos-de-tarjeta-de-expansion.html" target="_blank">FS. (n.d.). ¿Qué es una tarjeta de expansión y qué tipos hay?</a></li>
+        <li><a href="https://hardzone.es/noticias/perifericos/ranuras-expansion-pc/" target="_blank">HardZone. (n.d.). Ranuras de expansión en PC.</a></li>
+        <li><a href="https://humanidades.com/historia-de-la-computadora/" target="_blank">Humanidades. (n.d.). Historia de la computadora.</a></li>
+        <li><a href="https://www.kingston.com/es/blog/personal-storage/ssd-vs-hdd-differences" target="_blank">Kingston. (n.d.). Diferencias entre SSD y HDD.</a></li>
+        <li><a href="https://www.mundodeportivo.com/uncomo/tecnologia/articulo/tipos-de-ordenadores-54181.html#:~:text=Los%20tipos%20de%20ordenadores%20son,tablets%2C%20smartphones%20y%20computadoras%20vestibles." target="_blank">Mundo Deportivo. (n.d.). Tipos de ordenadores.</a></li>
+        <li><a href="https://www.openenglish.com/blog/es/historia-de-las-computadoras/" target="_blank">Open English. (n.d.). Historia de las computadoras.</a></li>
+        <li><a href="https://www.pccomponentes.com/tarjetas-de-expansion-pc-que-son" target="_blank">PC Componentes. (n.d.). Tarjetas de expansión: ¿Qué son?</a></li>
+        <li><a href="https://www.profesionalreview.com/2018/10/17/tipos-de-torre-pc/" target="_blank">Profesional Review. (2018). Tipos de torre para PC.</a></li>
+        <li><a href="https://spartangeek.com/blog/qu%C3%A9-tipos-de-gabinetes-de-computadora-existen-y-cu%C3%A1l-deber%C3%ADas-comprar" target="_blank">Spartan Geek. (n.d.). Tipos de gabinetes de computadora.</a></li>
+        <li><a href="https://sarreplec.caib.es/pluginfile.php/12038/mod_resource/content/1/SMR_MME01_Contenidos_Web/361_tipologas_y_caractersticas_de_las_ranuras_de_expansin.html" target="_blank">Sarreplec. (n.d.). Tipologías y características de las ranuras de expansión.</a></li>
+        <li><a href="https://www.xataka.com/basics/hdd-vs-ssd" target="_blank">Xataka. (n.d.). HDD vs. SSD: ¿Cuál es mejor?</a></li>
+        <li><a href="https://concepto.de/historia-de-la-computadora/" target="_blank">Concepto. (n.d.). Historia de la computadora.</a></li>
+        <li><a href="https://concepto.de/placa-madre/" target="_blank">Concepto. (n.d.). Placa madre.</a></li>
+        <li><a href="https://blogticutp2017.blogspot.com/2017/04/clases-y-tipos-de-computadoras.html" target="_blank">Blog Ticutp. (2017). Clases y tipos de computadoras.</a></li>
+        <li><a href="https://www.generacionyoung.com/tecnologia/mas-tecnologia/ranura-de-expansion/" target="_blank">Generación Young. (n.d.). Ranura de expansión.</a></li>
+        <li><a href="https://edu.gcfglobal.org/es/informatica-basica/tarjetas-de-expansion/1/" target="_blank">GCF Global. (n.d.). Tarjetas de expansión.</a></li>
+        <li><a href="https://es.wikipedia.org/wiki/Tarjeta_de_expansi%C3%B3n" target="_blank">Wikipedia. (n.d.). Tarjeta de expansión.</a></li>
+        <li><a href="https://es.wikipedia.org/wiki/Ranura_de_expansi%C3%B3n" target="_blank">Wikipedia. (n.d.). Ranura de expansión.</a></li>
+        <li><a href="https://www.dell.com/support/contents/es-ec/article/product-support/self-support-knowledgebase/data-storage-backup-and-recovery/support-for-hard-disk-drive" target="_blank">Dell. (n.d.). Soporte para discos duros.</a></li>
+        <li><a href="https://www.crehana.com/blog/transformacion-digital/tipos-de-computador/" target="_blank">Crehana. (n.d.). Tipos de computador.</a></li>
+        <li><a href="https://www.diferenciador.com/tipos-de-computadoras/" target="_blank">Diferenciador. (n.d.). Tipos de computadoras.</a></li>
+        <li><a href="https://www.mundodeportivo.com/uncomo/tecnologia/articulo/tipos-de-ordenadores-54181.html#:~:text=Los%20tipos%20de%20ordenadores%20son,tablets%2C%20smartphones%20y%20computadoras%20vestibles." target="_blank">Mundo Deportivo. (n.d.). Tipos de ordenadores.</a></li>
+    </ul>
+</div>
+
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const loading = document.getElementById('loading');
+    
+            // Verifica si el dispositivo es móvil
+            const isMobile = window.innerWidth <= 768;
+    
+            if (sidebar.style.left === '0px') {
+                sidebar.style.left = isMobile ? '-100%' : '-250px';
+            } else {
+                sidebar.style.left = '0px';
+                loading.style.display = 'block';
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                }, 1000);
+            }
+        }
+    
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section-content');
+            sections.forEach(section => {
+                section.style.display = 'none'; // Oculta todas las secciones
+            });
+    
+            // Muestra la sección seleccionada
+            const selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+            }
+    
+            // Cierra la barra lateral en dispositivos móviles
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+        }
+    </script>
+
+</body>
+</html>
